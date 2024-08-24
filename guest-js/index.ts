@@ -1,8 +1,6 @@
 import { UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from "@tauri-apps/api/core";
-import { Window } from '@tauri-apps/api/window';
-
-const appWindow = new Window('serial-port');
+import { listen } from '@tauri-apps/api/event';
 
 export interface PortInfo {
   path: "Unknown"|string;
@@ -226,7 +224,7 @@ class SerialPort {
     let sub_path = this.options.path?.toString().replace(/\.+/, '')
     let checkEvent = `plugin-serialport-disconnected-${sub_path}`;
     console.log('listen event: ' + checkEvent)
-    let unListen: any = await appWindow.listen<ReadDataResult>(
+    let unListen: any = await listen<ReadDataResult>(
         checkEvent,
         () => {
           try {
@@ -262,7 +260,7 @@ class SerialPort {
         return Promise.resolve();
       }
 
-      this.unListen = await appWindow.listen<ReadDataResult>(
+      this.unListen = await listen<ReadDataResult>(
           readEvent,
           ({ payload }) => {
             try {
